@@ -1,12 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Learnig Js</title>
+  </head>
+  <body class="h-screen bg-gray-800 flex items-center justify-center p-5">
+    <div class="max-w-sm bg-gray-900 shadow border-yellow-500 border-4 border-gray-600 w-96  mt-10 space-y-10 rounded-md p-6">
+        <h1 class="text-center text-2xl text-white font-bold"> People entered</h1>
+
+<p id="count" class="text-white text-center text-4xl">0</p>
+  <div class="w-full flex space-x-2 ">
+    <button id="increament-btn" class="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Add</button>
+    <button id="remove" class="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"onclick="decreament()">Remove</button>
+    <button id="save_btn" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"onclick="save()">Save</button>
+  </div>
+  <p class="text-gray-100 text-center font-mono" id="people"></p>
+
+
+</div>
+  <script src="./index.js"></script>
 </body>
 </html>
+
+
+
+
+
+
+
