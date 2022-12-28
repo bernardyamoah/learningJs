@@ -1,20 +1,9 @@
-var score=0;
-let message= "People were recorded"
-let peopleNumber=document.getElementById("people")
-var count= document.getElementById('count')
-const increment_btn= document.getElementById('increament-btn');
+let welcomeEl=document.getElementById('welcome-el')
+let name='Bernard'
 
-increment_btn.addEventListener('click',()=>{
-    score ++;
-    count.innerText=score;
-    console.log(count);
-})
- function decreament() {
-    score--;
-    count.innerText=score;
-    console.log(count);
- }
- function save() {
-    peopleNumber.innerText= score + ' ' + message
-    // console.log(peopleNumber + ' ' + message);
-}
+
+let greeting='Welcome back, ' + name;
+console.log( greeting)
+welcomeEl.innerText=greeting
+
+welcomeEl.innerText+=' 👋'
