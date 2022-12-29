@@ -23,6 +23,6 @@ score=0
 function clearCount(){
     score=0;
     count.textContent="0";
-    
+    // 
     peopleNumber.textContent="";
 }
