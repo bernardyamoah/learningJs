@@ -3,22 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="./output.css">
     <title>Learnig Js</title>
   </head>
-  <body class="h-screen bg-gray-800 flex items-center justify-center p-5">
-    <div class="max-w-sm bg-gray-900 shadow border-yellow-500 border-4 border-gray-600 w-96  mt-10 space-y-10 rounded-md p-6">
-        <h1 class="text-center text-2xl text-white font-bold"> People entered</h1>
+  <body class="text-zinc-50 h-screen bg-zinc-800 flex items-center justify-center p-5">
+<div class="shadow bg-zinc-300/10 rounded max-w-md p-4">
+  <input type="text" class="bg-zinc-400/30 w-full mx-auto mb-3 rounded-sm outline-none focus:ring-zinc-600 p-1 ring-2" placeholder="enter number between 2 and 21">
 
-<p id="count" class="text-white text-center text-4xl">0</p>
-  <div class="w-full flex space-x-2 ">
-    <button id="increament-btn" class="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Add</button>
-    <button id="remove" class="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"onclick="decreament()">Decrease</button>
-    <button id="save_btn" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"onclick="save()">Save</button>
-  </div>
-  <span class="text-gray-100 inline-block text-center w-full text-center font-mono" >People entered: </span>
-  <span class="text-gray-100 inline-block text-center w-full text-center font-mono" id="people"></span>
-<button class="p-2 rounded-sm text-white bg-blue-500 " onclick=" clearCount()">Clear</button>
+
+
+<p class="font-mono" >Console Logging outPut here: <span id="display"></span></p>
 
 </div>
   <script src="./index.js"></script>

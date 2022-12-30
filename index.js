@@ -1,28 +1,11 @@
-var score=0;
+const displayP =document.getElementById('display');
+let firstCard = 14
+let secondCard = 7
 
-let peopleNumber=document.getElementById("people")
-var count= document.getElementById('count')
-const increment_btn= document.getElementById('increament-btn');
-
-increment_btn.addEventListener('click',()=>{
-    score ++;
-    count.textContent=score;
-    console.log(count);
-})
- function decreament() {
-    score--;
-    count.textContent=score;
-    console.log(count);
- }
- function save() {
-let countStr = score + " - "
-peopleNumber.textContent += countStr
-count.textContent= 0
-score=0
+let sum = firstCard + secondCard
+if(sum<=20){
+    displayP.innerText="Do you want to draw a new card? 🙂"
 }
-function clearCount(){
-    score=0;
-    count.textContent="0";
-    // 
-    peopleNumber.textContent="";
+else if(sum===21){
+    displayP.innerText="Wohoo! You've got Blackjack! 😎"
 }
