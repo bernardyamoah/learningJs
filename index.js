@@ -9,3 +9,6 @@ if(sum<=20){
 else if(sum===21){
     displayP.innerText="Wohoo! You've got Blackjack! 😎"
 }
+else{
+    displayP.innerText="You're out of the game! 😭"
+}
