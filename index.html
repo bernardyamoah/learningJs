@@ -6,12 +6,28 @@
     <link rel="stylesheet" href="./output.css">
     <title>Learnig Js</title>
   </head>
-  <body class="text-zinc-50 h-screen bg-zinc-800 flex items-center justify-center p-5">
-<div class="shadow bg-zinc-300/10 rounded max-w-md p-4">
-  <input type="text" class="bg-zinc-400/30 w-full mx-auto mb-3 rounded-sm outline-none focus:ring-zinc-500 p-1 ring-4 text-lg focus-none" placeholder="enter number between 2 and 21 tracking-widest">
+  <body class="text-zinc-50 h-screen bg-zinc-800 flex items-center flex-col justify-center p-5 duratio-300 transition-all">
+    <h1 class="mb-6 text-5xl text-yellow-500  font-sans font-semibold">Black Jack</h1>
+<div class="text-center shadow bg-zinc-300/10 rounded max-w-md p-4">
+  <!-- <input type="text" class="bg-zinc-400/30 w-full mx-auto mb-3 rounded-sm outline-none focus:ring-zinc-500 p-1 ring-4 text-lg focus-none" placeholder="enter number between 2 and 21 tracking-widest"> -->
+
+  <!-- MESSAGE -->
+  <p id="message-el" class="font-extralight text-2xl  text-center my-5">Want to play a round?</p>
 
 
+  <!-- CARDS -->
+  <p class="text-center text-lg my-4 p-2 rounded shadow-md bg-zinc-600/40 " id="card-el">Cards:</p>
 
+  <!-- SUM -->
+  <p class="text-center text-lg my-4 p-2 rounded shadow-md bg-zinc-600/40 " id="sum-el">Sum:</p>
+
+  <!-- START GAME BUTTON -->
+  <button class="p-2 font-bold text-lg bg-yellow-500 text-emerld-500 w-96 mt-6 hover:bg-yellow-600/90 rounded-md" onclick="startGame()">START GAME</button>
+
+  <!-- NEW CARD BUTTON -->
+  <button class="p-2 font-bold text-lg hover:bg-yellow-600/80 text-white w-96  rounded-md mt-2 mb-6 bg-yellow-700/30" onclick="newCard()">New Card</button>
+
+  <!-- CONSOLE LOGGING -->
 <p class="font-mono" >Console Logging outPut here: <span id="display"></span></p>
 
 </div>
