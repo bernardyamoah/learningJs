@@ -1,28 +1,40 @@
-var score=0;
 
-let peopleNumber=document.getElementById("people")
-var count= document.getElementById('count')
-const increment_btn= document.getElementById('increament-btn');
+let time= document.getElementById('time')
+let ms=0;
+let s=0;
+let m=0;
+let intervalId
 
-increment_btn.addEventListener('click',()=>{
-    score ++;
-    count.textContent=score;
-    console.log(count);
+function start(){
+intervalId=setInterval(function(){
+    
+        ms++;
+        
+        if(ms===10){
+            s++;
+            ms=0;
+        }
+        if(s===60){
+            m++;
+            s=0;
+        }
+        time.innerHTML=`${m}:${s}:${ms}`
+        },100
+
+
+)
+
+} 
+
+const stopButton=document.getElementById('stop');
+stopButton.addEventListener('click',()=> clearInterval(intervalId))
+const startButton= document.getElementById('start')
+startButton.addEventListener('click',start)
+const resetButton= document.getElementById('reset')
+resetButton.addEventListener('click',()=>{
+    clearInterval(intervalId)
+    time.innerHTML=`00:00:00`
+    ms=0;
+    s=0;
+    m=0;
 })
- function decreament() {
-    score--;
-    count.textContent=score;
-    console.log(count);
- }
- function save() {
-let countStr = score + " - "
-peopleNumber.textContent += countStr
-count.textContent= 0
-score=0
-}
-function clearCount(){
-    score=0;
-    count.textContent="0";
-    // 
-    peopleNumber.textContent="";
-}

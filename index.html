@@ -7,18 +7,22 @@
     <title>Learnig Js</title>
   </head>
   <body class="h-screen bg-gray-800 flex items-center justify-center p-5">
-    <div class="max-w-sm bg-gray-900 shadow border-yellow-500 border-4 border-gray-600 w-96  mt-10 space-y-10 rounded-md p-6">
-        <h1 class="text-center text-2xl text-white font-bold"> People entered</h1>
+    <div class="max-w-sm bg-gray-900 shadow border-yellow-500 border-4  w-96  mt-10 space-y-10 rounded-md p-6">
+        <h1 class="text-center text-2xl text-slate-400 font-thin"> Stop Watch</h1>
+      <div class="mx-auto  flex flex-col text-center ">
+        <p id="time" class=" text-6xl text-white font-bold font-mono">00:00:00</p>
+        <!-- buttons -->
+        <div class=" mt-10 space-x-5  transition-all duration-300">
+          <!-- Start Button -->
+          <button  id="start" class=" rounded-full px-4 py-1 bg-emerald-500 text-slate-100 hover:bg-emerald-400">Start</button>
+          
+          <!-- Stop Button -->
+          <button id="stop" class="bg-red-500  hover:bg-red-400 rounded-full px-4 py-1 text-slate-100"> Stop</button>
 
-<p id="count" class="text-white text-center text-4xl">0</p>
-  <div class="w-full flex space-x-2 ">
-    <button id="increament-btn" class="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Add</button>
-    <button id="remove" class="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"onclick="decreament()">Decrease</button>
-    <button id="save_btn" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"onclick="save()">Save</button>
-  </div>
-  <span class="text-gray-100 inline-block text-center w-full text-center font-mono" >People entered: </span>
-  <span class="text-gray-100 inline-block text-center w-full text-center font-mono" id="people"></span>
-<button class="p-2 rounded-sm text-white bg-blue-500 " onclick=" clearCount()">Clear</button>
+          <!-- Reset Button -->
+          <button id="reset" class="bg-blue-800  hover:bg-blue-400 rounded-full px-4 py-1 text-slate-300">Reset</button>
+        </div>
+      </div>
 
 </div>
   <script src="./index.js"></script>
