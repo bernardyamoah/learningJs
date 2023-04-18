@@ -12,7 +12,7 @@
 	<body class="grid place-items-center">
 		
 
-    <div class="w-full border p-4 max-w-xl space-y-4 divide-y-2 mx-auto">
+    <div class="w-full border p-4 max-w-xl space-y-8 divide-y-2 mx-auto">
 		
 <div class="flex items-center justify-center w-full">
     
@@ -20,11 +20,12 @@
 <input class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="file_input" type="file">
 
 </div> 
-<div class="mb-10">
+<div class="mb-16">
 	
 	<img id="myProfile" src="" alt="" class="w-full h-full object-cover object-center aspect-square hidden mb-10">
+	<span id="progressValue" class="block mt-5 text-center font-bold text-blue-600"></span>
 	<div id="progressWrapper" class="hidden mt-2 w-full bg-gray-200 rounded-full h-1.5 mb-4 dark:bg-gray-700">
-		<div id="fileTransferProgress" class=" bg-blue-600 h-1.5 rounded-full dark:bg-blue-500" style="width:0"></div> <span id="progressValue" class="text-center font-bold text-blue-600"></span>
+		<div id="fileTransferProgress" class=" bg-blue-600 h-1.5 rounded-full dark:bg-blue-500" style="width:0"></div> 
 	  </div>
 	  
 </div>

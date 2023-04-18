@@ -71,7 +71,8 @@ async function uploadfile() {
         console.log('Selected file:', fileName);
       const fileRef = ref(storage, `Images/${email.value}/${fileName}.png`);
       const uploadTask = uploadBytesResumable(fileRef, files[0]);
-      const progressWrapper = document.getElementById('progress');
+      const progressWrapper = document.getElementById('progressWrapper');
+      progressWrapper.classList.toggle('hidden')
       let progress;
   
       uploadTask.on('state_changed', (snapshot) => {
