@@ -5,6 +5,7 @@ import {
 	onSnapshot,
 	getDocs,
 } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-firestore.js";
+import { getStorage, ref,listAll, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-storage.js";
 
 // Initialize Firebase
 const firebaseConfig = {
@@ -20,10 +21,37 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const storage = getStorage(app);
 
 
-// Filling the Card
 
+
+// get firestore image url?
+
+// Get the reference to the image file in the Storage
+const listRef = ref(storage, 'images/');
+// Find all the prefixes and items.
+listAll(listRef)
+  .then((res) => {
+    res.prefixes.forEach((folderRef) => {
+      // All the prefixes under listRef.
+      // You may call listAll() recursively on them.
+      console.log(folderRef)
+    });
+    res.items.forEach((itemRef) => {
+      // All the items under listRef.
+      const url = getDownloadURL(itemRef)
+      console.log(url)
+    });
+  }).catch((error) => {
+    // Uh-oh, an error occurred!
+    console.log(error)
+  });
+
+// Fetch the first page of 100.
+const firstPage = await list(listRef);
+// // Get the download URL of the file
+// const url = await getDownloadURL(itemRef);
 
 
 
@@ -34,6 +62,7 @@ async function GetAllData(){
 
     users.forEach(user => {
         const cardcontainer=document.getElementById('user-list')
+        
         const card =`<div 
         class="w-full max-w-xs grow-1 overflow-hidden bg-white rounded-lg shadow-lg dark:bg-gray-800 border"
     >
@@ -141,16 +170,6 @@ async function GetAllData(){
 }
     
     
-    // function addItemToCard(users){
-    //     const card = document.getElementById('card');
-    //     const userAvatar= document.getElementById('userAvatar')
-    //     const username=document.getElementById('username');
-    //     const userEmail=document.getElementById('userEmail');
-    //     const userPhone=document.getElementById('phoneNumber');
-    //     const userWebsite=document.getElementById('userWebsite');
-    //     const user = users[0];
-    //     userAvatar.src=user.avatar;
-    //     username.innerHTML = user.firstname + ' '+ user.lastname;
-    // }
+
 
 window.onload=GetAllData

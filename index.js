@@ -1,9 +1,9 @@
  // Import the functions you need from the SDKs you need
  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-app.js";
  import {
-    getFirestore,doc,getDoc,collection,updateDoc,addDoc,deleteDoc,getDocs,getStorage
+    getFirestore,doc,collection,updateDoc,addDoc,deleteDoc,getDoc
 } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-firestore.js";
-import { getStorage, ref } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-storage.js";
+import { getStorage,ref, uploadBytesResumable} from "https://www.gstatic.com/firebasejs/9.19.1/firebase-storage.js";
  // TODO: Add SDKs for Firebase products that you want to use
  // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -22,19 +22,23 @@ import { getStorage, ref } from "https://www.gstatic.com/firebasejs/9.19.1/fireb
  // Initialize Firebase
  const app = initializeApp(firebaseConfig);
  const db=getFirestore(app)
- const storage = getStorage(app);
 
-// References
+
+//  File input Reference
+ const storage = getStorage(app);
+ const FileInput = document.getElementById('file_input');
+ const fileTransferProgress = document.getElementById('fileTransferProgress');
+ const progressValue=document.getElementById('progressValue')
+ 
+ let files = [];
+ let reader;
+ 
+ // References
 const first_name=document.getElementById('first_name');
 const last_name=document.getElementById('last_name');
 const email=document.getElementById('email');
 const phone=document.getElementById('phone');
 const website=document.getElementById('website');
-var ImgName,ImgUrl;
-var files=[]
-var reader
-var FileInput = document.getElementById('file_input')
-var File = document.getElementById('file_input-text')
 
 
 // Buttons
@@ -44,50 +48,63 @@ const delBtn=document.getElementById('delBtn');
 const selBtn=document.getElementById('selBtn');
 
 
+// File Input
+FileInput.addEventListener('change', function() {
+    files = this.files;
+    reader = new FileReader();
+  
+    reader.onload = function() {
+      document.getElementById('myProfile').classList.toggle('hidden');
+      document.getElementById('myProfile').src = reader.result;
+     
+    };
+  
+    reader.readAsDataURL(files[0]);
+  });
+FileInput.click();
 
 
-
-FileInput.onchange=e=>{
-    // e.preventDefault();
-    files=e.target.files;
-    reader=new FileReader();
-
-        reader.onload=function(){
-        document.getElementById('myProfile').src = reader.result
-    }
-        reader.readAsDataURL(files[0]);
-}
-FileInput.click()
-function uploadImage(){
-    ImgName = document.getElementById('namebox').value;
-    var uploadTask = firebase.storage().ref('Images/'+ ImgName +".png").put(files[0]);
-    uploadTask.on('state_changed', function(snapshot){
-        var progress = (snapshot.bytesTranferred / snapshot.totalBytes) * 100;
-        document.getElementById('fileTransferProgress').style.width=`${progress}%`;
-        
-    },
-    function(error){
-        console.log(error)
-    },
-    function(){
-        uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL){
-            ImgUrl=downloadURL;
-            console.log(ImgUrl)
-            firebase.database.ref('Pictures/'+ImgName).set({
-                Name:ImgName,
-                Url:ImgUrl
-            });
-            iziToast.success({
-                title: 'Success',
-                message: 'Image successfully added',
-            })
-            
+// Uploaf file
+async function uploadfile() {
+    try {
+        var fileName=files[0].name.split('\\').pop(); //
+        console.log('Selected file:', fileName);
+      const fileRef = ref(storage, `Images/${email.value}/${fileName}.png`);
+      const uploadTask = uploadBytesResumable(fileRef, files[0]);
+      const progressWrapper = document.getElementById('progress');
+      let progress;
+  
+      uploadTask.on('state_changed', (snapshot) => {
+        progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        progressValue.innerText=progress.toFixed(2) + "%";
+        console.log(progressValue)
+        fileTransferProgress.style.width = `${progress.toFixed(2)}%`;
+      }, (error) => {
+        console.log(error);
+      }, () => {
+        fileRef.getDownloadURL().then((url) => {
+            console.log('File URL:', url);
+          var imgUrl = url;
+          const fileDocRef = doc(db, 'files', 'file-id');
+          setDoc(fileDocRef, {
+            Name: imgName,
+            Url: imgUrl,
+          })
+          .then(() => {
+            console.log('Image successfully added.');
+            resetInputs()
+          })
+          .catch((error) => {
+            console.log(error);
+          });
         });
-
+      });
+    } 
+    catch (err) {
+      console.log(err);
     }
-    
-    );
-}
+  };    
+
 // Validate input fields
 function validateInputs() {
     if (first_name.value.trim() === '') {
@@ -135,37 +152,43 @@ function resetInputs() {
     email.value = '';
     phone.value = '';
     website.value = '';
+    FileInput.value ='' ;
+    fileTransferProgress.value = '';
+    progressValue.value=''
     }
 // Get data from Firestore
-async function getDataFromFirestore() {
-    const querySnapshot = await getDocs(collection(db, "your_collection_name"));
-    const data = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-    return data;
-  }
+
 
 
 
 async function AddDocument(){
     try{
         // Validate input fields
-if (!validateInputs()) {
-    return;}
-        var ref = collection(db, 'Persons')
+// if (!validateInputs()) {
+//     return;}
+    var ref = collection(db, 'Persons')
     const docRef= await addDoc(
         ref,{
             Firstname:first_name.value,
             Lastname:last_name.value,
             Email:email.value,
             Phone:phone.value,
-            Website:website.value
+            Website:website.value,
+
 
         }
+        
     )
+    
+    
     .then(()=>{
-        iziToast.success({
-            title: 'Success',
-            message: 'Document successfully added',
-        });
+        uploadfile()
+        
+            iziToast.success({
+                title: 'Success',
+                message: 'Document successfully added',
+            });
+        
     })
     }
     catch(error){
@@ -212,7 +235,7 @@ async function GetDocument() {
         message: 'Document unsuccessfully due to ' + error,
     });
 }
-
+}
 
 
 
@@ -277,11 +300,8 @@ async function deleteDocument()
     }
 }
 
-
-
 // Assign Events to Buttons
 submitBtn.addEventListener('click', AddDocument)
-submitBtn.addEventListener('click',  uploadImage)
 selBtn.addEventListener('click', GetDocument)
 btnUpdate.addEventListener('click', UpdateFieldsInaDocument)
 delBtn.addEventListener('click', deleteDocument)
@@ -300,4 +320,8 @@ iziToast.settings({
     balloon: true,
     });
 
-}
+
+
+
+
+    

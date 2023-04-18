@@ -1,9 +1,7 @@
- // Import the functions you need from the SDKs you need
- import { initializeApp } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-app.js";
- import {
-    getFirestore
-} from "https://www.gstatic.com/firebasejs/9.19.1/firebase-firestore.js";
-import { getStorage,ref } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-storage.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-app.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-firestore.js";
+import { getStorage,ref, uploadBytesResumable} from "https://www.gstatic.com/firebasejs/9.19.1/firebase-storage.js";
+
  // TODO: Add SDKs for Firebase products that you want to use
  // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -21,62 +19,64 @@ import { getStorage,ref } from "https://www.gstatic.com/firebasejs/9.19.1/fireba
 
  // Initialize Firebase
  const app = initializeApp(firebaseConfig);
- const db=getFirestore(app)
+ const db = getFirestore(app);
  const storage = getStorage(app);
-var imgName,imgUrl;
-var files=[]
-var reader
+ const FileInput = document.getElementById('file_input');
+ 
+ const fileTransferProgress = document.getElementById('fileTransferProgress');
+ const progressValue=document.getElementById('progressValue')
+ const uploadButton = document.getElementById('upload');
+ let files = [];
+ let reader;
+ 
 
-
-var FileInput = document.getElementById('file_input')
-
-
-FileInput.onchange=e=>{
-    // e.preventDefault();
-    files=e.target.files;
-    reader=new FileReader();
-
-        reader.onload=function(){
-        document.getElementById('myProfile').classList.toggle('hidden')
-        document.getElementById('myProfile').src = reader.result
-    },
+ FileInput.addEventListener('change', function() {
+    files = this.files;
+    reader = new FileReader();
+  
+    reader.onload = function() {
+      document.getElementById('myProfile').classList.toggle('hidden');
+      document.getElementById('myProfile').src = reader.result;
     
-        reader.readAsDataURL(files[0])
-}
-FileInput.click()
+    };
+  
+    reader.readAsDataURL(files[0]);
+  });
+  
+  FileInput.click();
 
 
-document.getElementById('upload').onclick=function(){
-    
-    imgName = document.getElementById('file_input').value;
-    var uploadTask = ref(storage, 'Images/'+ imgName +".png").put(files[0]);
-    // Upload Progress
-    uploadTask.on('state_changed', function(snapshot){
-        document.getElemendById('progressWrapper').classList.toggle('hidden')
-        var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        
-        document.getElementById('progress').innerHTML = progress + "%";
-        document.getElementById('fileTransferProgress').style.width=`${progress}%`;
-    }),
-    (error) => {
+uploadButton.addEventListener('click', async () => {
+  try {
+    const imgName = FileInput.value;
+    const fileRef = ref(storage, `Images/${imgName}.png`);
+    const uploadTask = uploadBytesResumable(fileRef, files[0]);
+    // const progressWrapper = document.getElementById('progress');
+    let progress;
+
+    uploadTask.on('state_changed', (snapshot) => {
+      progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      progressValue.innerText=progress.toFixed(2) + "%";
+      fileTransferProgress.style.width = `${progress.toFixed(2)}%`;
+    }, (error) => {
       console.log(error);
-    },
-    () => {
-      uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+    }, () => {
+      fileRef.getDownloadURL().then((downloadURL) => {
         imgUrl = downloadURL;
-        const picturesRef = db.collection("Pictures").doc(imgName);
-        picturesRef.set({
+        const fileDocRef = doc(db, 'files', 'file-id');
+        setDoc(fileDocRef, {
           Name: imgName,
           Url: imgUrl,
         })
         .then(() => {
-          console.log("Image successfully added.");
+          console.log('Image successfully added.');
         })
         .catch((error) => {
           console.log(error);
         });
       });
-    }
-    
-    
-}
+    });
+  } catch (err) {
+    console.log(err);
+  }
+});
