@@ -1,9 +1,9 @@
  // Import the functions you need from the SDKs you need
  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-app.js";
  import {
-    getFirestore,doc,getDoc,collection,updateDoc,addDoc,deleteDoc,getDocs
+    getFirestore,doc,getDoc,collection,updateDoc,addDoc,deleteDoc,getDocs,getStorage
 } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-firestore.js";
-
+import { getStorage, ref } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-storage.js";
  // TODO: Add SDKs for Firebase products that you want to use
  // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -22,14 +22,19 @@
  // Initialize Firebase
  const app = initializeApp(firebaseConfig);
  const db=getFirestore(app)
+ const storage = getStorage(app);
 
 // References
 const first_name=document.getElementById('first_name');
 const last_name=document.getElementById('last_name');
 const email=document.getElementById('email');
-
 const phone=document.getElementById('phone');
 const website=document.getElementById('website');
+var ImgName,ImgUrl;
+var files=[]
+var reader
+var FileInput = document.getElementById('file_input')
+var File = document.getElementById('file_input-text')
 
 
 // Buttons
@@ -38,6 +43,99 @@ const btnUpdate=document.getElementById('updBtn');
 const delBtn=document.getElementById('delBtn');
 const selBtn=document.getElementById('selBtn');
 
+
+
+
+
+FileInput.onchange=e=>{
+    // e.preventDefault();
+    files=e.target.files;
+    reader=new FileReader();
+
+        reader.onload=function(){
+        document.getElementById('myProfile').src = reader.result
+    }
+        reader.readAsDataURL(files[0]);
+}
+FileInput.click()
+function uploadImage(){
+    ImgName = document.getElementById('namebox').value;
+    var uploadTask = firebase.storage().ref('Images/'+ ImgName +".png").put(files[0]);
+    uploadTask.on('state_changed', function(snapshot){
+        var progress = (snapshot.bytesTranferred / snapshot.totalBytes) * 100;
+        document.getElementById('fileTransferProgress').style.width=`${progress}%`;
+        
+    },
+    function(error){
+        console.log(error)
+    },
+    function(){
+        uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL){
+            ImgUrl=downloadURL;
+            console.log(ImgUrl)
+            firebase.database.ref('Pictures/'+ImgName).set({
+                Name:ImgName,
+                Url:ImgUrl
+            });
+            iziToast.success({
+                title: 'Success',
+                message: 'Image successfully added',
+            })
+            
+        });
+
+    }
+    
+    );
+}
+// Validate input fields
+function validateInputs() {
+    if (first_name.value.trim() === '') {
+    iziToast.warning({
+    title: 'Warning',
+    message: 'Please enter first name',
+    });
+    return false;
+    }
+    if (last_name.value.trim() === '') {
+    iziToast.warning({
+    title: 'Warning',
+    message: 'Please enter last name',
+    });
+    return false;
+    }
+    if (email.value.trim() === '') {
+    iziToast.warning({
+    title: 'Warning',
+    message: 'Please enter email',
+    });
+    return false;
+    }
+    if (phone.value.trim() === '') {
+    iziToast.warning({
+    title: 'Warning',
+    message: 'Please enter phone number',
+    });
+    return false;
+    }
+    if (website.value.trim() === '') {
+    iziToast.warning({
+    title: 'Warning',
+    message: 'Please enter website',
+    });
+    return false;
+    }
+    return true;
+    }
+    
+// Reset input fields
+function resetInputs() {
+    first_name.value = '';
+    last_name.value = '';
+    email.value = '';
+    phone.value = '';
+    website.value = '';
+    }
 // Get data from Firestore
 async function getDataFromFirestore() {
     const querySnapshot = await getDocs(collection(db, "your_collection_name"));
@@ -49,6 +147,9 @@ async function getDataFromFirestore() {
 
 async function AddDocument(){
     try{
+        // Validate input fields
+if (!validateInputs()) {
+    return;}
         var ref = collection(db, 'Persons')
     const docRef= await addDoc(
         ref,{
@@ -77,41 +178,45 @@ async function AddDocument(){
 }
 
 // Get Document
-async function GetDocument(){
-    try{
-        var ref = doc(db, 'Persons',first_name.value || email.value || last_name.value || phone)
-    const docSnap= await getDoc(ref)
-    .then((docSnap)=>{
-        if(docSnap .exists()){
-            first_name.value=docSnap.data().Name
-            last_name.value=docSnap.data().Lastname
-            email.value=docSnap.data().Email
-        
-            phone.value=docSnap.data().Phone
-            website.value=docSnap.data().Website
+async function GetDocument() {
+    try {
+    // Get document reference based on the input fields
+    const ref = doc(
+    db,
+    'Persons',
+    email.value || first_name.value || last_name.value || phone.value
+    );
+    const docSnap = await getDoc(ref);
 
-            iziToast.success({
-                title: 'Success',
-                message: 'Document successfully added',
-            });
-            
-        }
-        
-        else{
-            iziToast.error({
-                title: error,
-                message: 'Document does not exist ',
-            });
-        }
-    })
-    }
-    catch(error){
-        iziToast.error({
-            title: error,
-            message: 'Document does not exist ',
+    if (docSnap.exists()) {
+        // Populate input fields with document data
+        first_name.value = docSnap.data().Name;
+        last_name.value = docSnap.data().Lastname;
+        email.value = docSnap.data().Email;
+        phone.value = docSnap.data().Phone;
+        website.value = docSnap.data().Website;
+
+        iziToast.success({
+            title: 'Success',
+            message: 'Document successfully retrieved',
+        });
+    } else {
+        iziToast.warning({
+            title: 'Warning',
+            message: 'Document does not exist',
         });
     }
+} catch (error) {
+    iziToast.error({
+        title: 'Error',
+        message: 'Document unsuccessfully due to ' + error,
+    });
 }
+
+
+
+
+
 // Update Fields
 async function UpdateFieldsInaDocument(){
     try{
@@ -173,8 +278,10 @@ async function deleteDocument()
 }
 
 
+
 // Assign Events to Buttons
 submitBtn.addEventListener('click', AddDocument)
+submitBtn.addEventListener('click',  uploadImage)
 selBtn.addEventListener('click', GetDocument)
 btnUpdate.addEventListener('click', UpdateFieldsInaDocument)
 delBtn.addEventListener('click', deleteDocument)
@@ -193,3 +300,4 @@ iziToast.settings({
     balloon: true,
     });
 
+}

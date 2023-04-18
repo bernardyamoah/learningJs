@@ -1,12 +1,34 @@
+ // Import the functions you need from the SDKs you need
+ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-app.js";
+ import {
+    getFirestore
+} from "https://www.gstatic.com/firebasejs/9.19.1/firebase-firestore.js";
+import { getStorage,ref } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-storage.js";
+ // TODO: Add SDKs for Firebase products that you want to use
+ // https://firebase.google.com/docs/web/setup#available-libraries
 
+ // Your web app's Firebase configuration
+ const firebaseConfig = {
+    apiKey: "AIzaSyASJLuDG5jhvDiaJ-GQ-keLR2Xhy2wNI-o",
+    authDomain: "mydemo-9802c.firebaseapp.com",
+    databaseURL: "https://mydemo-9802c-default-rtdb.firebaseio.com",
+    projectId: "mydemo-9802c",
+    storageBucket: "mydemo-9802c.appspot.com",
+    messagingSenderId: "636147442459",
+    appId: "1:636147442459:web:42dd3e3c25c62167fc29be"
 
-var ImgName,ImgUrl;
+ };
+
+ // Initialize Firebase
+ const app = initializeApp(firebaseConfig);
+ const db=getFirestore(app)
+ const storage = getStorage(app);
+var imgName,imgUrl;
 var files=[]
 var reader
 
 
 var FileInput = document.getElementById('file_input')
-var File = document.getElementById('file_input-text')
 
 
 FileInput.onchange=e=>{
@@ -22,44 +44,35 @@ FileInput.onchange=e=>{
 FileInput.click()
 
 
-    // for(var i=0;i<files.length;i++){
-    //     reader=new FileReader();
-    //     reader.readAsDataURL(files[i]);
-    //     reader.onload=function(e){
-    //         ImgName=files[i].name;
-    //         console.log(ImgName)
-    //         ImgUrl=e.target.result;
+function uploadImage(){
+    imgName = document.getElementById('file_input').value;
+    var uploadTask = ref(storage, 'Images/'+ imgName +".png").put(files[0]);
 
-//     const fileTransferProgress=document.getElementById('fileTransferProgress')
-// ImgName=document.getElementById().value
-// -UPLOAD PROCESS
-document.getElementById('upload').onclick = function(){
-    ImgName = document.getElementById('namebox').value;
-    var uploadTask = firebase.storage().ref('Images/'+ ImgName +".png").put(files[0]);
     uploadTask.on('state_changed', function(snapshot){
-        var progress = (snapshot.bytesTranferred / snapshot.totalBytes) * 100;
+        var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         document.getElementById('fileTransferProgress').style.width=`${progress}%`;
         
     },
-    function(error){
-        console.log(error)
+    (error) => {
+      console.log(error);
     },
-    function(){
-        uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL){
-            ImgUrl=downloadURL;
-            console.log(ImgUrl)
-            firebase.database.ref('Pictures/'+ImgName).set({
-                Name:ImgName,
-                Url:ImgUrl
-            });
-            iziToast.success({
-                title: 'Success',
-                message: 'Image successfully added',
-            })
-            
+    () => {
+      uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+        imgUrl = downloadURL;
+        const picturesRef = db.collection("Pictures").doc(imgName);
+        picturesRef.set({
+          Name: imgName,
+          Url: imgUrl,
+        })
+        .then(() => {
+          console.log("Image successfully added.");
+        })
+        .catch((error) => {
+          console.log(error);
         });
-
+      });
     }
     
     );
 }
+submitBtn.addEventListener('click',  uploadImage)
