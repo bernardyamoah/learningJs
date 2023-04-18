@@ -37,22 +37,27 @@ FileInput.onchange=e=>{
     reader=new FileReader();
 
         reader.onload=function(){
+        document.getElementById('myProfile').classList.toggle('hidden')
         document.getElementById('myProfile').src = reader.result
-    }
-        reader.readAsDataURL(files[0]);
+    },
+    
+        reader.readAsDataURL(files[0])
 }
 FileInput.click()
 
 
-function uploadImage(){
+document.getElementById('upload').onclick=function(){
+    
     imgName = document.getElementById('file_input').value;
     var uploadTask = ref(storage, 'Images/'+ imgName +".png").put(files[0]);
-
+    // Upload Progress
     uploadTask.on('state_changed', function(snapshot){
+        document.getElemendById('progressWrapper').classList.toggle('hidden')
         var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        document.getElementById('fileTransferProgress').style.width=`${progress}%`;
         
-    },
+        document.getElementById('progress').innerHTML = progress + "%";
+        document.getElementById('fileTransferProgress').style.width=`${progress}%`;
+    }),
     (error) => {
       console.log(error);
     },
@@ -73,6 +78,5 @@ function uploadImage(){
       });
     }
     
-    );
+    
 }
-submitBtn.addEventListener('click',  uploadImage)
