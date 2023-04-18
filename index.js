@@ -64,47 +64,54 @@ FileInput.addEventListener('change', function() {
 FileInput.click();
 
 
-// Uploaf file
-async function uploadfile() {
+// Upload file
+function uploadfile() {
     try {
-        var fileName=files[0].name.split('\\').pop(); //
-        console.log('Selected file:', fileName);
+      var fileName = files[0].name.split('\\').pop();
+      console.log('Selected file:', fileName);
       const fileRef = ref(storage, `Images/${email.value}/${fileName}.png`);
       const uploadTask = uploadBytesResumable(fileRef, files[0]);
       const progressWrapper = document.getElementById('progressWrapper');
       progressWrapper.classList.toggle('hidden')
       let progress;
   
-      uploadTask.on('state_changed', (snapshot) => {
-        progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        progressValue.innerText=progress.toFixed(2) + "%";
-        console.log(progressValue)
-        fileTransferProgress.style.width = `${progress.toFixed(2)}%`;
-      }, (error) => {
-        console.log(error);
-      }, () => {
-        fileRef.getDownloadURL().then((url) => {
+      return new Promise((resolve, reject) => {
+        uploadTask.on('state_changed', (snapshot) => {
+          progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          progressValue.innerText = progress.toFixed(0) + "%";
+          console.log(progressValue.innerText = progress.toFixed(0) + "%")
+          fileTransferProgress.style.width = `${progress.toFixed(0)}%`;
+          if (progress === 100) {
+            resolve();
+          }
+        }, (error) => {
+          console.log(error);
+          reject(error);
+        }, () => {
+          fileRef.getDownloadURL().then((url) => {
             console.log('File URL:', url);
-          var imgUrl = url;
-          const fileDocRef = doc(db, 'files', 'file-id');
-          setDoc(fileDocRef, {
-            Name: imgName,
-            Url: imgUrl,
-          })
-          .then(() => {
-            console.log('Image successfully added.');
-            resetInputs()
-          })
-          .catch((error) => {
-            console.log(error);
+            var imgUrl = url;
+            const fileDocRef = doc(db, 'files', 'file-id');
+            setDoc(fileDocRef, {
+                Name: imgName,
+                Url: imgUrl,
+              })
+              .then(() => {
+                console.log('Image successfully added.');
+                resetInputs()
+              })
+              .catch((error) => {
+                console.log(error);
+              });
           });
         });
       });
-    } 
-    catch (err) {
+    } catch (err) {
       console.log(err);
+      return Promise.reject(err);
     }
-  };    
+  }
+      
 
 // Validate input fields
 function validateInputs() {

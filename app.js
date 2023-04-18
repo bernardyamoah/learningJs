@@ -21,37 +21,8 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const storage = getStorage(app);
 
 
-
-
-// get firestore image url?
-
-// Get the reference to the image file in the Storage
-const listRef = ref(storage, 'images/');
-// Find all the prefixes and items.
-listAll(listRef)
-  .then((res) => {
-    res.prefixes.forEach((folderRef) => {
-      // All the prefixes under listRef.
-      // You may call listAll() recursively on them.
-      console.log(folderRef)
-    });
-    res.items.forEach((itemRef) => {
-      // All the items under listRef.
-      const url = getDownloadURL(itemRef)
-      console.log(url)
-    });
-  }).catch((error) => {
-    // Uh-oh, an error occurred!
-    console.log(error)
-  });
-
-// Fetch the first page of 100.
-const firstPage = await list(listRef);
-// // Get the download URL of the file
-// const url = await getDownloadURL(itemRef);
 
 
 
