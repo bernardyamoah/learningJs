@@ -21,23 +21,26 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+
+// Filling the Card
+
+
+
+
 // Fetch data from Firestore
 async function GetAllData(){
     const querySnapshot = await getDocs(collection(db, "Persons"));
+    const users = querySnapshot.docs.map(doc => doc.data());
 
-    querySnapshot.forEach((doc) => {
-        var user = doc.data();
-        console.log(user)
-        
-        // Build HTML template with user data
-        var template = `
-        <div
-        class="w-full max-w-xs overflow-hidden bg-white rounded-lg shadow-lg dark:bg-gray-800 border"
+    users.forEach(user => {
+        const cardcontainer=document.getElementById('user-list')
+        const card =`<div 
+        class="w-full max-w-xs grow-1 overflow-hidden bg-white rounded-lg shadow-lg dark:bg-gray-800 border"
     >
         <img
             class=" object-cover object-center w-full h-56"
             src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80"
-            alt="${user.avatar}"
+            alt="${user.avatar}"id="userAvatar"
         />
 
         <div class="flex items-center px-6 py-3 bg-gray-900">
@@ -58,12 +61,12 @@ async function GetAllData(){
             <h1 class="mx-3 text-lg font-semibold text-white">Focusing</h1>
         </div>
 
-        <div class="px-6 py-4 user_info">
+        <div class="px-6 py-4 user_info overflow-hidden">
             <h1
                 id="username"
                 class="text-xl font-semibold text-gray-800 dark:text-white"
             >
-                ${user.Firstname}  ${user.Lastname}
+                ${user.Firstname} ${user.Lastname}
             </h1>
 
             <div class="flex items-center mt-4 text-gray-700 dark:text-gray-200">
@@ -82,7 +85,8 @@ async function GetAllData(){
                     />
                 </svg>
 
-                <h1 id"userWebsite"=class="px-2 text-sm">${user.Website}</h1>
+                
+                <a href="https://${user.website}" target="_blank" class="block px-2 text-sm">${user.website}</a>
             </div>
 
             <div class="flex items-center mt-4 text-gray-700 dark:text-gray-200">
@@ -126,41 +130,27 @@ async function GetAllData(){
                 <h1 id="userEmail" class="px-2 text-sm">${user.Email}</h1>
             </div>
         </div>
-    </div>
-                              `;
-        // Append to user list
-        document.getElementById("user-list").innerHTML=template
-    });
+    </div>`
+        
+
     
-    
-    
-    
-    
-    // Listen for changes to the Persons collection
-    onSnapshot(querySnapshot, (snapshot) => {
-        snapshot.forEach((doc) => {
-            var user = doc.data();
-            // Build HTML template with user data
-            var template = `
-            <div class="w-full max-w-sm overflow-hidden bg-white rounded-lg shadow-lg dark:bg-gray-800">
-            <img class="hidden object-cover object-center w-full h-56" src="${user.avatar}" alt="avatar">
-    
-            <div class="flex items-center px-6 py-3 bg-gray-900">
-              <svg aria-label="headphones icon" class="w-6 h-6 text-white fill-current" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M17 21C15.8954 21 15 20.1046 15 19V15C15 13.8954 15.8954 13 17 13H19V12C19 8.13401 15.866 5 12 5C8.13401 5 5 8.13401 5 12V13H7C8.10457 13 9 13.8954 9 15V19C9 20.1046 8.10457 21 7 21H3V12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12V21H17ZM19 15H17V19H19V15ZM7 15H5V19H7V15Z"/>
-              </svg>
-    
-              <h1 class="mx-3 text-lg font-semibold text-white">${user.phone}</h1>
-            </div>
-    
-            <div class="px-6 py-4 user_info">
-              <h1 id="username" class="text-xl font-semibold text-gray-800 dark:text-white">${user.name}</h1>
-              </div>
-          </div>
-          `;
-          document.getElementById("user-list").append(template);
-    });
-    });
+
+        cardcontainer.innerHTML += (card);
+      });
+
 }
+    
+    
+    // function addItemToCard(users){
+    //     const card = document.getElementById('card');
+    //     const userAvatar= document.getElementById('userAvatar')
+    //     const username=document.getElementById('username');
+    //     const userEmail=document.getElementById('userEmail');
+    //     const userPhone=document.getElementById('phoneNumber');
+    //     const userWebsite=document.getElementById('userWebsite');
+    //     const user = users[0];
+    //     userAvatar.src=user.avatar;
+    //     username.innerHTML = user.firstname + ' '+ user.lastname;
+    // }
 
 window.onload=GetAllData
