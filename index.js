@@ -1,7 +1,7 @@
  // Import the functions you need from the SDKs you need
  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-app.js";
  import {
-    getFirestore,doc,collection,updateDoc,addDoc,deleteDoc,getDoc
+    getFirestore,doc,collection,updateDoc,addDoc,deleteDoc
 } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-firestore.js";
 import { getStorage,ref, uploadBytesResumable} from "https://www.gstatic.com/firebasejs/9.19.1/firebase-storage.js";
  // TODO: Add SDKs for Firebase products that you want to use
@@ -26,10 +26,10 @@ import { getStorage,ref, uploadBytesResumable} from "https://www.gstatic.com/fir
 
 //  File input Reference
  const storage = getStorage(app);
- const FileInput = document.getElementById('file_input');
+ const fileInput = document.getElementById('file_input');
  const fileTransferProgress = document.getElementById('fileTransferProgress');
  const progressValue=document.getElementById('progressValue')
- 
+ const myProfile = document.getElementById('myProfile');
  let files = [];
  let reader;
  
@@ -49,70 +49,85 @@ const selBtn=document.getElementById('selBtn');
 
 
 // File Input
-FileInput.addEventListener('change', function() {
+fileInput.addEventListener('change', function() {
     files = this.files;
     reader = new FileReader();
   
     reader.onload = function() {
-      document.getElementById('myProfile').classList.toggle('hidden');
-      document.getElementById('myProfile').src = reader.result;
+    
+    myProfile.classList.remove('hidden');
+    myProfile.src = reader.result;
      
     };
   
     reader.readAsDataURL(files[0]);
   });
-FileInput.click();
+fileInput.click();
 
 
 // Upload file
-function uploadfile() {
+const uploadFile = async () => {
     try {
-      var fileName = files[0].name.split('\\').pop();
+      const fileName = fileInput.files[0].name.split('\\').pop();
       console.log('Selected file:', fileName);
-      const fileRef = ref(storage, `Images/${email.value}/${fileName}.png`);
-      const uploadTask = uploadBytesResumable(fileRef, files[0]);
+      const fileRef = ref(storage, `Images/${email.value}/${fileName}`);
+      const uploadTask = uploadBytesResumable(fileRef, fileInput.files[0]);
       const progressWrapper = document.getElementById('progressWrapper');
-      progressWrapper.classList.toggle('hidden')
+      progressWrapper.classList.toggle('hidden');
       let progress;
-  
-      return new Promise((resolve, reject) => {
-        uploadTask.on('state_changed', (snapshot) => {
-          progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          progressValue.innerText = progress.toFixed(0) + "%";
-          console.log(progressValue.innerText = progress.toFixed(0) + "%")
-          fileTransferProgress.style.width = `${progress.toFixed(0)}%`;
-          if (progress === 100) {
-            resolve();
-          }
-        }, (error) => {
-          console.log(error);
-          reject(error);
-        }, () => {
-          fileRef.getDownloadURL().then((url) => {
-            console.log('File URL:', url);
-            var imgUrl = url;
-            const fileDocRef = doc(db, 'files', 'file-id');
-            setDoc(fileDocRef, {
-                Name: imgName,
-                Url: imgUrl,
-              })
-              .then(() => {
-                console.log('Image successfully added.');
-                resetInputs()
-              })
-              .catch((error) => {
-                console.log(error);
-              });
-          });
-        });
-      });
-    } catch (err) {
-      console.log(err);
-      return Promise.reject(err);
-    }
-  }
       
+  
+      uploadTask.on('state_changed', function(snapshot) {
+        // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+        progress = (snapshot.bytesTransferred / snapshot.totalBytes).toFixed(0) * 100;
+        progressValue.innerText = `${progress}%`;
+        fileTransferProgress.style.width = `${progress}%`;
+      });
+      await uploadTask;
+      progressWrapper.classList.toggle('hidden');
+      iziToast.success({
+      title: 'Success',
+      message: 'Document successfully added',
+    });
+    resetInputs()
+    progressWrapper.classList.toggle('hidden');
+    } catch (err) {
+        if (!uploadFile.hasShownError) { // check if an error toast has already been shown
+            uploadFile.hasShownError = true; // set flag to true
+            iziToast.error({
+              title: "Error",
+              message: "Upload unsuccessfully due to " + err,
+            });
+          }
+    }
+  };
 
+//   Add Document
+const addDocument = async () => {
+    try {
+      // Validate input fields
+      // if (!validateInputs()) {
+      //     return;}
+      const ref = collection(db, 'Persons');
+      const docRef = await addDoc(ref, {
+        Firstname: first_name.value,
+        Lastname: last_name.value,
+        Email: email.value,
+        Phone: phone.value,
+        Website: website.value,
+      });
+  
+      await uploadFile();
+    } catch (error) {
+        if (!AddDocument.hasShownError) { // check if an error toast has already been shown
+            AddDocument.hasShownError = true; // set flag to true
+            iziToast.error({
+              title: "Error",
+              message: `Document unsuccessfully due to ${error}`,
+            });
+          }
+    }
+  };
 // Validate input fields
 function validateInputs() {
     if (first_name.value.trim() === '') {
@@ -160,59 +175,30 @@ function resetInputs() {
     email.value = '';
     phone.value = '';
     website.value = '';
-    FileInput.value ='' ;
+    fileInput.value ='' ;
     fileTransferProgress.value = '';
     progressValue.value=''
+    progressValue.innerText=''
+    files=[]
+    myProfile.src = ''
+    myProfile.classList.toggle('hidden')
+
+
+    console.log('done reseting')
+    progressWrapper.classList.toggle('hidden')
     }
 // Get data from Firestore
 
 
 
 
-async function AddDocument(){
-    try{
-        // Validate input fields
-// if (!validateInputs()) {
-//     return;}
-    var ref = collection(db, 'Persons')
-    const docRef= await addDoc(
-        ref,{
-            Firstname:first_name.value,
-            Lastname:last_name.value,
-            Email:email.value,
-            Phone:phone.value,
-            Website:website.value,
 
-
-        }
-        
-    )
-    
-    
-    .then(()=>{
-        uploadfile()
-        
-            iziToast.success({
-                title: 'Success',
-                message: 'Document successfully added',
-            });
-        
-    })
-    }
-    catch(error){
-        iziToast.error({
-            title: error,
-            message: 'Document unsuccessfully due to ' + error,
-        });
-    }
-    
-}
 
 // Get Document
 async function GetDocument() {
     try {
     // Get document reference based on the input fields
-    const ref = doc(
+    const ref = getDoc(
     db,
     'Persons',
     email.value || first_name.value || last_name.value || phone.value
@@ -221,7 +207,7 @@ async function GetDocument() {
 
     if (docSnap.exists()) {
         // Populate input fields with document data
-        first_name.value = docSnap.data().Name;
+        first_name.value = docSnap.data().Firstname;
         last_name.value = docSnap.data().Lastname;
         email.value = docSnap.data().Email;
         phone.value = docSnap.data().Phone;
@@ -309,7 +295,7 @@ async function deleteDocument()
 }
 
 // Assign Events to Buttons
-submitBtn.addEventListener('click', AddDocument)
+submitBtn.addEventListener('click', addDocument)
 selBtn.addEventListener('click', GetDocument)
 btnUpdate.addEventListener('click', UpdateFieldsInaDocument)
 delBtn.addEventListener('click', deleteDocument)
@@ -332,4 +318,5 @@ iziToast.settings({
 
 
 
-    
+    // submit picture to storage
+
