@@ -37,8 +37,8 @@ import { getStorage,ref, uploadBytesResumable} from "https://www.gstatic.com/fir
 const first_name=document.getElementById('first_name');
 const last_name=document.getElementById('last_name');
 const email=document.getElementById('email');
-const phone=document.getElementById('phone');
-const website=document.getElementById('website');
+
+
 
 
 // Buttons
@@ -113,8 +113,8 @@ const addDocument = async () => {
         Firstname: first_name.value,
         Lastname: last_name.value,
         Email: email.value,
-        Phone: phone.value,
-        Website: website.value,
+    
+        
       });
   
       await uploadFile();
@@ -151,30 +151,18 @@ function validateInputs() {
     });
     return false;
     }
-    if (phone.value.trim() === '') {
-    iziToast.warning({
-    title: 'Warning',
-    message: 'Please enter phone number',
-    });
-    return false;
-    }
-    if (website.value.trim() === '') {
-    iziToast.warning({
-    title: 'Warning',
-    message: 'Please enter website',
-    });
-    return false;
-    }
+    
+    if (fileInput.value.trim() === '') {
     return true;
     }
+    return false;
+}
     
 // Reset input fields
 function resetInputs() {
     first_name.value = '';
     last_name.value = '';
     email.value = '';
-    phone.value = '';
-    website.value = '';
     fileInput.value ='' ;
     fileTransferProgress.value = '';
     progressValue.value=''
@@ -201,7 +189,7 @@ async function GetDocument() {
     const ref = getDoc(
     db,
     'Persons',
-    email.value || first_name.value || last_name.value || phone.value
+    email.value || first_name.value || last_name.value 
     );
     const docSnap = await getDoc(ref);
 
@@ -210,8 +198,8 @@ async function GetDocument() {
         first_name.value = docSnap.data().Firstname;
         last_name.value = docSnap.data().Lastname;
         email.value = docSnap.data().Email;
-        phone.value = docSnap.data().Phone;
-        website.value = docSnap.data().Website;
+        // myProfile.src = docSnap.data().ProfileImage;
+        
 
         iziToast.success({
             title: 'Success',
@@ -237,14 +225,14 @@ async function GetDocument() {
 // Update Fields
 async function UpdateFieldsInaDocument(){
     try{
-        var ref = doc(db, 'Persons', email.value || first_name.value || last_name.value || phone.value || website)
+        var ref = doc(db, 'Persons', email.value || first_name.value || last_name.value )
     await updateDoc(ref,{
         Firstname:first_name.value,
         theme: 'dark',
         Lastname:last_name.value,
         Email:email.value,
-        Phone:phone.value,
-        Website:website.value
+        
+    
     })
     .then(()=>{
         iziToast.info({
@@ -265,7 +253,7 @@ async function UpdateFieldsInaDocument(){
 async function deleteDocument()
 {
     try{
-        var ref = doc(db, 'Persons', email.value || first_name.value || last_name.value  || phone)
+        var ref = doc(db, 'Persons', email.value || first_name.value || last_name.value )
     const docSnap= await getDoc(ref)
     if(!docSnap.exists()){
         iziToast.warning({

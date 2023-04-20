@@ -86,7 +86,7 @@ async function GetAllData(){
                 </svg>
 
                 
-                <a href="https://${user.website}" target="_blank" class="block px-2 text-sm">${user.website}</a>
+                
             </div>
 
             <div class="flex items-center mt-4 text-gray-700 dark:text-gray-200">
@@ -109,7 +109,7 @@ async function GetAllData(){
                     />
                 </svg>
 
-                <h1 id="phoneNumber" class="px-2 text-sm">${user.Phone}</h1>
+            
             </div>
 
             <div class="flex items-center mt-4 text-gray-700 dark:text-gray-200">
