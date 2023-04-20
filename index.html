@@ -9,10 +9,27 @@
 		<title>Read, write, update, delete datea</title>
 	</head>
 
-	<body class="p-5">
+	<body class="grid place-items-center h-screen">
 		
+ <div><a href="./users.html" class="bg-amber-500 rounded-sm hover:bg-amber-600 transition-colors px-4 py-2 shadow font-bold text-lg">Go to users</a></div>
+    <div class="w-full border p-4 max-w-xl space-y-8 divide-y-2 mx-auto">
+		
+<div class="flex items-center justify-center w-full">
+    
+<label class="block mb-2 text-sm font-medium text-gray-900 " for="file_input">Upload file</label>
+<input class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="file_input" type="file" >
 
-    <div class="w-full border p-4 max-w-xl space-y-4 divide-y-2 mx-auto">
+</div> 
+<div class="mb-16">
+	
+	<img id="myProfile" src="" alt="" class="w-full h-full object-cover object-center aspect-square hidden mb-10">
+	<span id="progressValue" class="block mt-5 text-center font-bold text-blue-600"></span>
+	<div id="progressWrapper" class="hidden mt-2 w-full bg-gray-200 rounded-full h-1.5 mb-4 dark:bg-gray-700">
+		<div id="fileTransferProgress" class=" bg-blue-600 h-1.5 rounded-full dark:bg-blue-500 duration-500 transition-all" ></div> 
+	  </div>
+	  
+</div>
+
       <div class="grid gap-6 mb-6 md:grid-cols-2">
           <div class="relative">
               <label for="first_name" class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white  px-2 peer-focus:px-2 peer-focus:text-blue-600  peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">First name</label>
@@ -23,14 +40,8 @@
               <input type="text" id="last_name" class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none  focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder="Doe" required>
           </div>
          
-          <div class="relative">
-              <label for="phone" class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white  px-2 peer-focus:px-2 peer-focus:text-blue-600  peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Phone number</label>
-              <input type="tel" id="phone" class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none  focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder="123-45-678"  required>
-          </div>
-          <div class="relative">
-              <label for="website" class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white  px-2 peer-focus:px-2 peer-focus:text-blue-600  peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Website URL</label>
-              <input type="url" id="website" class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none  focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder="flowbite.com" required>
-          </div>
+         
+        
         
       </div>
       <div class="mb-6 relative">
@@ -39,39 +50,40 @@
       </div> 
       
       
-      <div class="flex items-start mb-6 ">
+      
         
-      <div class="flex space-x-2 mt-10">
+      <div class="block md:flex md:space-x-2 space-y-3 md:space-y-0 mt-20 border ">
 				<button
-					class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full"
+					class="block md:inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full"
 					type="submit" id="submitBtn"
 				>
 					Submit
 				</button>
 			
 				<button
-					class="py-2 px-4 font-bold rounded w-full text-white bg-emerald-500 hover:bg-emerald-700"
+					class="block md:inline-block py-2 px-4 font-bold rounded w-full text-white bg-emerald-500 hover:bg-emerald-700"
 					id="updBtn"
 				>
 					Update
 				</button>
 				<button
-					class="py-2 px-4 font-bold rounded w-full text-white bg-red-500 hover:bg-red-700"
+					class="block md:inline-block py-2 px-4 font-bold rounded w-full text-white bg-red-500 hover:bg-red-700"
 					id="delBtn"
 				>
 					Delete
 				</button>
 				<button
-					class="py-2 px-4 font-bold rounded w-full text-white bg-amber-500 hover:bg-amber-700"
+					class="block md:inline-block py-2 px-4 font-bold rounded w-full text-white bg-amber-500 hover:bg-amber-700"
 					id="selBtn"
 				>
 					Select
 				</button>
-			</div>
+			
     
   </div>
-  
-		<script src="./index.js"></script>
+	</div>
+		
+		<!-- <script type="module" src="./fileTransfer.js"></script> -->
     <script src="./iziToast.min.js" type="text/javascript"></script>
 		<script type="module" src="./index.js"></script>
 	</body>
