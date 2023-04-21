@@ -30,7 +30,7 @@ const db = getFirestore(app);
 async function GetAllData(){
     const querySnapshot = await getDocs(collection(db, "Persons"));
     const users = querySnapshot.docs.map(doc => doc.data());
-
+console.log(users)
     users.forEach(user => {
         const cardcontainer=document.getElementById('user-list')
         
@@ -39,7 +39,7 @@ async function GetAllData(){
     >
         <img
             class=" object-cover object-center w-full h-56"
-            src="${user.ImageURL}"
+            src="${user.ImageURL.imageLink}"
             alt="${user.Firstname} ${user.Lastname}"id="userAvatar"
         />
 
