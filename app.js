@@ -39,8 +39,8 @@ async function GetAllData(){
     >
         <img
             class=" object-cover object-center w-full h-56"
-            src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80"
-            alt="${user.avatar}"id="userAvatar"
+            src="${user.ImageURL}"
+            alt="${user.Firstname} ${user.Lastname}"id="userAvatar"
         />
 
         <div class="flex items-center px-6 py-3 bg-gray-900">

@@ -3,7 +3,7 @@
  import {
     getFirestore,doc,collection,updateDoc,addDoc,deleteDoc,getDoc
 } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-firestore.js";
-import { getStorage,ref, uploadBytesResumable} from "https://www.gstatic.com/firebasejs/9.19.1/firebase-storage.js";
+import { getStorage,ref, uploadBytesResumable,getDownloadURL} from "https://www.gstatic.com/firebasejs/9.19.1/firebase-storage.js";
  // TODO: Add SDKs for Firebase products that you want to use
  // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -37,7 +37,7 @@ import { getStorage,ref, uploadBytesResumable} from "https://www.gstatic.com/fir
 const first_name=document.getElementById('first_name');
 const last_name=document.getElementById('last_name');
 const email=document.getElementById('email');
-
+let imageLink
 
 
 
@@ -77,21 +77,41 @@ const uploadFile = async () => {
       let progress;
       
   
-      uploadTask.on('state_changed', function(snapshot) {
+       uploadTask.on('state_changed', function(snapshot) {
         // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
         progress = (snapshot.bytesTransferred / snapshot.totalBytes).toFixed(0) * 100;
         progressValue.innerText = `${progress}%`;
         fileTransferProgress.style.width = `${progress}%`;
-      });
+      }
+      , function(error) {
+          console.log('Error: ', error);
+      },
+      ()=>{
+        getDownloadURL(uploadTask.snapshot.ref).then((url)=>{
+            imageLink=url
+            saveURLtoFirestore(imageLink);
+        })
+    });
       await uploadTask;
       progressWrapper.classList.toggle('hidden');
       iziToast.success({
       title: 'Success',
       message: 'Document successfully added',
     });
+    async function saveURLtoFirestore(imageLink){
+        console.log('THe url can be downloaded here: '+ imageLink)
+        // return imageLink= downloadURL
+        // await updateDoc(doc(db, 'Persons'), { ImageURL: downloadURL });
+    }
+
+
+
+
+
     resetInputs()
     progressWrapper.classList.toggle('hidden');
-    } catch (err) {
+    }
+    catch (err){
         if (!uploadFile.hasShownError) { // check if an error toast has already been shown
             uploadFile.hasShownError = true; // set flag to true
             iziToast.error({
@@ -108,24 +128,23 @@ const addDocument = async () => {
       // Validate input fields
       // if (!validateInputs()) {
       //     return;}
+      await uploadFile(imageLink);
+      console.log(imageLink)
       const ref = collection(db, 'Persons');
       const docRef = await addDoc(ref, {
         Firstname: first_name.value,
         Lastname: last_name.value,
         Email: email.value,
-    
+        ImageURL: {imageLink}
         
       });
-  
-      await uploadFile();
     } catch (error) {
-        if (!AddDocument.hasShownError) { // check if an error toast has already been shown
-            AddDocument.hasShownError = true; // set flag to true
+        
             iziToast.error({
               title: "Error",
               message: `Document unsuccessfully due to ${error}`,
             });
-          }
+          
     }
   };
 // Validate input fields
